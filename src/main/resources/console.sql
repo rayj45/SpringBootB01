@@ -1,3 +1,4 @@
 select now();
 
-SELECT * FROM BOARD;
+SELECT * FROM BOARD
+ORDER BY BNO DESC;
