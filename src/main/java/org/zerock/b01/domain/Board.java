@@ -1,7 +1,8 @@
 package org.zerock.b01.domain;
 
-import jakarta.persistence.*;
 import lombok.*;
+
+import javax.persistence.*;
 
 @Entity //엔티티 객체는 반드시 @Entity를 적용해야 함
 @Getter

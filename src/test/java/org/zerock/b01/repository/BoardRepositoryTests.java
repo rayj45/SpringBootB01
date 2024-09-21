@@ -84,6 +84,34 @@ public class BoardRepositoryTests {
         todoList.forEach(board -> log.info(board));
     }
 
+    @Test
+    public void testSearch1(){
 
+        Pageable pageable = PageRequest.of(1, 10, Sort.by("bno").descending());
+
+        boardRepository.search1(pageable);
+    }
+
+    @Test
+    public void testSearchAll(){
+
+        String[] types = {"t","c","w"};
+
+        String keyword = "1";
+
+        Pageable pageable = PageRequest.of(0,10,Sort.by("bno").descending());
+
+        Page<Board> result = boardRepository.searchAll(types, keyword, pageable);
+
+        log.info("전체페이지 개수 : " + result.getTotalPages());
+
+        log.info("페이지 내 데이터 개수 : " + result.getSize());
+
+        log.info("현재페이지번호 : " + result.getNumber());
+
+        log.info("이전페이지 여부  : " + result.hasPrevious() + " 다음페이지 여부 : " + result.hasNext());
+
+        result.getContent().forEach(board -> log.info(board));
+    }
 
 }
