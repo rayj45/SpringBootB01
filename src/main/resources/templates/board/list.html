@@ -59,6 +59,7 @@
                         </tbody>
                     </table>
 
+                    <!--페이징-->
                     <div class="float-end">
                         <ul class="pagination flex-wrap">
                             <li class="page-item" th:if="${responseDTO.prev}">
@@ -77,7 +78,7 @@
                                 <a class="page-link" th:data-num="${responseDTO.end +1}">Next</a>
                             </li>
                         </ul>
-                    </div>
+                    </div><!--페이징-->
                 </div><!--card-body-->
             </div><!--card-->
         </div><!--col-->
@@ -85,7 +86,35 @@
 </div>
 
 <script layout:fragment="script" th:inline="javascript">
-    console.log("script...")
+    document.querySelector(".pagination").addEventListener("click", function (e) {
+    /*querySelector : 괄호 속에 제공한 선택자와 일치하는 문서 내 첫 번째 Element를 반환
+    일치하는 요소가 없다면 null 반환 - 여기서는 pagination태그에 이벤트를 추가하는 것*/
+        e.preventDefault()
+        e.stopPropagation()
+
+        const target = e.target
+
+        if (target.tagName !== 'A'){
+            return
+        }
+
+        const num = target.getAttribute("data-num")
+
+        const formObj = document.querySelector("form")
+        /*form : 검색창*/
+
+        formObj.innerHTML += `<input type='hidden' name='page' value='${num}'>`
+        /*페이지번호를 클릭하면 검색창의 form태그에 hidden으로 페이지 번호를 추가하여 submit*/
+
+        formObj.submit();
+    }, false)
+
+    document.querySelector(".clearBtn").addEventListener("click", function (e) {
+        e.preventDefault()
+        e.stopPropagation()
+
+        self.location = '/board/list'
+    }, false)
 </script>
 
 </html>
