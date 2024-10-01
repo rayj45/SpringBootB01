@@ -4,13 +4,13 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Entity //엔티티 객체는 반드시 @Entity를 적용해야 함
+@Entity //엔티티 객체는 반드시 @Entity 를 적용해야 함
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Board {
+public class Board extends BaseEntity{
 
     @Id //pk
     @GeneratedValue(strategy = GenerationType.IDENTITY) //키 생성전략 - identity : auto increment

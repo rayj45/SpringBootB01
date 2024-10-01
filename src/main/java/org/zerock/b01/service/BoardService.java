@@ -14,5 +14,5 @@ public interface BoardService {
     
     void remove(Long bno); //삭제
 
-    PageResponseDTO<BoardDTO> list(PageRequestDTO pageRequestDTO);
+    PageResponseDTO<BoardDTO> list(PageRequestDTO pageRequestDTO); //BoardDTO 타입으로 페이징 리스트
 }
