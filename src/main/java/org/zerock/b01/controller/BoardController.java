@@ -58,7 +58,18 @@ public class BoardController {
         Long bno = boardService.register(boardDTO);
 
         redirectAttributes.addFlashAttribute("result", bno);
+        //addFlashAttribute로 전달된 데이터는 쿼리스트링으로 처리되지 않기에 브라우저 경로에는 보이지 않음. 이에 일회성으로 데이터 전송 시 사용
+        //list로 전달? - list화면에서 result alert처리된 후 list화면 나옴
 
         return "redirect:/board/list";
+    }
+
+    @GetMapping("/read")
+    public void read(Long bno, PageRequestDTO pageRequestDTO, Model model){
+        BoardDTO boardDTO = boardService.readOne(bno);
+
+        log.info(boardDTO);
+
+        model.addAttribute("dto", boardDTO);
     }
 }

@@ -41,7 +41,17 @@
 </div>
 
 <script layout:fragment="script" th:inline="javascript">
+    const errors = [[${errors}]] /*controller에서 보낸 bindingResult.getAllErrors()*/
+    console.log(errors)
 
+    let errorMsg = ''
+
+    if (errors){
+        for (let i = 0; i < errors.length; i++){
+            errorMsg += `${errors[i].field}은(는) ${errors[i].code} \n`
+        } //controller에서 잡아낸 에러가 있다면, 에러의 key,value를 for문으로 담아냄
+        alert(errorMsg)
+    }
 </script>
 
 </html>
