@@ -64,7 +64,7 @@ public class BoardController {
         return "redirect:/board/list";
     }
 
-    @GetMapping("/read")
+    @GetMapping({"/read", "/modify"})
     public void read(Long bno, PageRequestDTO pageRequestDTO, Model model){
         BoardDTO boardDTO = boardService.readOne(bno);
 
@@ -72,4 +72,42 @@ public class BoardController {
 
         model.addAttribute("dto", boardDTO);
     }
+
+    @PostMapping("/modify")
+    public String modify(PageRequestDTO pageRequestDTO, @Valid BoardDTO boardDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes){
+        log.info("board modify post..." + boardDTO);
+
+        if (bindingResult.hasErrors()){
+            log.info("has errors...");
+
+            redirectAttributes.addFlashAttribute("erors", bindingResult.getAllErrors());
+
+            redirectAttributes.addAttribute("bno", boardDTO.getBno());
+
+            String link = pageRequestDTO.getLink(); //기존의 저장된 링크주소를 가져옴
+
+            return "redirect:/board/modify?" + link;
+        }
+
+        boardService.modify(boardDTO);
+
+        redirectAttributes.addFlashAttribute("result", "modified");
+
+        redirectAttributes.addAttribute("bno", boardDTO.getBno());
+
+        return "redirect:/board/read";
+    }
+
+    @PostMapping("/remove")
+    public String remove(Long bno, RedirectAttributes redirectAttributes){
+        log.info("remove post..." + bno);
+
+        boardService.remove(bno);
+
+        redirectAttributes.addFlashAttribute("result", "removed");
+
+        return "redirect:/board/list";
+    }
+
+
 }
