@@ -41,6 +41,20 @@ public class CustomRestAdvice {
         return ResponseEntity.badRequest().body(errorMap);
     } //handleBindException은 컨트롤러에서 BindException이 던져지는 경우 이를 이용해 JSON메시지와 400에러를 전송
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
+    public ResponseEntity<Map<String, String>> handleFKException(Exception e){
+
+        log.error(e);
+
+        Map<String, String> errorMap = new HashMap<>();
+
+        errorMap.put("time", ""+System.currentTimeMillis());
+        errorMap.put("msg", "constraint fails");
+
+        return ResponseEntity.badRequest().body(errorMap);
+        //DataIntegrityViolationException이 발생하면 msg를 클라이언트로 발송
+    }
 
 
 
