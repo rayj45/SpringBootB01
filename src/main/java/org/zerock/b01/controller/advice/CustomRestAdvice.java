@@ -56,6 +56,21 @@ public class CustomRestAdvice {
         //DataIntegrityViolationException이 발생하면 msg를 클라이언트로 발송
     }
 
+    @ExceptionHandler({NoSuchElementException.class, EmptyResultDataAccessException.class})
+    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
+    public ResponseEntity<Map<String, String>> handleNoSuchElement(Exception e){
+
+        log.error(e);
+
+        Map<String, String> errorMap = new HashMap<>();
+
+        errorMap.put("time", ""+System.currentTimeMillis());
+        errorMap.put("msg", "No Such Element Exception");
+
+        return ResponseEntity.badRequest().body(errorMap);
+        //NoSuchElementException, EmptyResultDataAccessException이 발생하면 msg를 클라이언트로 발송
+    }
+
 
 
 

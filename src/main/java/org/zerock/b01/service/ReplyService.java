@@ -11,7 +11,7 @@ public interface ReplyService {
     
     void modify(ReplyDTO replyDTO); //수정
     
-    void delete(Long rno); //삭제
+    void remove(Long rno); //삭제
 
     PageResponseDTO<ReplyDTO> getListOfBoard(Long bno, PageRequestDTO pageRequestDTO); //댓글 페이징구현
 }
