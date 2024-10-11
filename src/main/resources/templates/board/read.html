@@ -70,12 +70,25 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!--axios : Ajax를 호출하는 코드 작성 시 마치 동기화된 방식처럼 작성 가능(Promise기반 HTTP클라이언트)-->
 
     <script src="/js/reply.js"></script>
 
 </div><!--content-->
 
 <script layout:fragment="script" th:inline="javascript">
+
+    const bno = [[${dto.bno}]]
+
+    // console.log(get1(bno));
+
+    /*일반적인 try-catch를 js식인 then-chatch사용(콜백)*/
+    get1(bno).then(data =>{
+        console.log(data)
+    }).catch(e => {
+        console.error(e)
+    })
+
 
 
 </script>
