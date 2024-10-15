@@ -2,13 +2,16 @@ package org.zerock.b01.controller;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
+import net.coobird.thumbnailator.Thumbnailator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.zerock.b01.dto.upload.UploadFileDTO;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
@@ -38,7 +41,14 @@ public class UpDownController {
                 Path savePath = Paths.get(uploadPath, uuid + "_" + originalName);
 
                 try {
-                    multipartFile.transferTo(savePath); //transferTo : 지정 경로에 파일을 저장(여기서는 savePath 경로에 저장)
+                    multipartFile.transferTo(savePath); //transferTo : 지정 경로에 파일을 저장(여기서는 savePath이름으로 저장)
+
+                    if (Files.probeContentType(savePath).startsWith("image")){ //savePath파일 중에 image파일이라면
+
+                        File thumbFile = new File(uploadPath, "s_" + uuid + "_" + originalName); //썸네일 파일명 새로 파서 thumbFile에 할당
+
+                        Thumbnailator.createThumbnail(savePath.toFile(), thumbFile, 200, 200);
+                    }
                 }catch (IOException e){
                     e.printStackTrace();
                 }
