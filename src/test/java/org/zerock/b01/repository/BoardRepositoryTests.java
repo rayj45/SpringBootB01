@@ -13,6 +13,7 @@ import org.zerock.b01.dto.BoardListReplyCountDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 @Log4j2
@@ -133,6 +134,21 @@ public class BoardRepositoryTests {
         result.getContent().forEach(board -> {
             log.info(board);
         });
+    }
+
+    @Test
+    public void testInsertWithImages(){
+
+        Board board = Board.builder()
+                .title("BoardImage_test")
+                .content("BoardImageContent_test")
+                .writer("tester")
+                .build();
+
+        for (int i = 0; i < 3; i++){
+            board.addImage(UUID.randomUUID().toString(), "file" + i + ".jpg"); //uuid, fileName
+        } //첨부파일 3개 등록
+        boardRepository.save(board);
     }
 
 }

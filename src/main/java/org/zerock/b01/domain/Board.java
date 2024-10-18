@@ -32,8 +32,28 @@ public class Board extends BaseEntity{
         this.content = content;
     }
 
-    @OneToMany(mappedBy = "board") //게시글 관점에서 다수의 첨부파일(HashSet자료구조 사용 - 무순서, null값 허용)
+    @OneToMany(mappedBy = "board", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY) //cascadeType.ALL : board객체의 모든 상태변화에 BoardImage객체 역시 같이 변경
+    //게시글 관점에서 다수의 첨부파일(HashSet자료구조 사용 - 무순서, null값 허용)
     //mappedBy : 매핑테이블(여기서는 board_image_set)을 생성하지 않기 위해 설정. 어떤 엔티티의 속성으로 매핑되는지를 설정(게시글을 연관관계의 주인으로 설정)
     @Builder.Default
     private Set<BoardImage> imageSet = new HashSet<>();
+
+    public void addImage(String uuid, String fileName){
+
+        BoardImage boardImage = BoardImage.builder()
+                .uuid(uuid)
+                .fileName(fileName)
+                .board(this) //현재 Board객체
+                .ord(imageSet.size())
+                .build();
+        imageSet.add(boardImage);
+    }
+
+    public void clearImages(){
+
+        imageSet.forEach(boardImage -> boardImage.changeBoard(null)); //Board객체에 등록되어있는 BoardImage객체들을 모두 제거
+
+        this.imageSet.clear();
+    }
+
 }

@@ -19,7 +19,7 @@ public class BoardImage implements Comparable<BoardImage> {
 
     private String fileName;
 
-    private int ord;
+    private int ord; //순서
 
     @ManyToOne //첨부파일 관점에서 게시글을 바라봄
     private Board board;
@@ -29,7 +29,7 @@ public class BoardImage implements Comparable<BoardImage> {
         return this.ord - other.ord;
     }
 
-    private void changeBoard(Board board){ //board객체를 나중에 지정하게(바꾸게) 하는 메서드 - 게시글 삭제 시 BoardImage 객체의 게시글 참조 변경 위함
+    public void changeBoard(Board board){ //board객체를 나중에 지정하게(바꾸게) 하는 메서드 - 게시글 삭제 시 BoardImage 객체의 게시글 참조 변경 위함
         this.board = board;
     }
 }
