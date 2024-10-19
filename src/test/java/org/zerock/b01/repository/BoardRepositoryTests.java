@@ -9,8 +9,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.zerock.b01.domain.Board;
+import org.zerock.b01.domain.BoardImage;
 import org.zerock.b01.dto.BoardListReplyCountDTO;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -150,5 +152,26 @@ public class BoardRepositoryTests {
         } //첨부파일 3개 등록
         boardRepository.save(board);
     }
+
+    @Test
+    public void testReadWithImage(){
+
+//        Optional<Board> result = boardRepository.findById(1L);
+        Optional<Board> result = boardRepository.findIdByWithImages(1L);
+
+        Board board = result.orElseThrow(); //예외처리
+
+        log.info(board);
+        log.info("----------------");
+//        log.info(board.getImageSet()); //게시물에 등록된 이미지들 조회
+        //Transactional 처리를 안하면 DB에 여러번 접근해야 하므로 No Session 에러 발생
+
+        for (BoardImage boardImage : board.getImageSet()){ //board객체에서 ImageSet객체가 있는 동안 반복
+            log.info(boardImage); //boardImage객체 로그생성
+        }
+
+    }
+
+
 
 }
