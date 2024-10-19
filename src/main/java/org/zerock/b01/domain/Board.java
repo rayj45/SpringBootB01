@@ -1,6 +1,7 @@
 package org.zerock.b01.domain;
 
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -32,10 +33,13 @@ public class Board extends BaseEntity{
         this.content = content;
     }
 
-    @OneToMany(mappedBy = "board", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY) //cascadeType.ALL : board객체의 모든 상태변화에 BoardImage객체 역시 같이 변경
+    @OneToMany(mappedBy = "board", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, orphanRemoval = true)
+    //cascadeType.ALL : board객체의 모든 상태변화에 BoardImage객체 역시 같이 변경
+    //하위 엔티티(BoardImage)의 상위객체(Board) 참조가 없는 상태가 되면 orphanRemoval = true 설정해줘야 하위엔티티 삭제가 됨
     //게시글 관점에서 다수의 첨부파일(HashSet자료구조 사용 - 무순서, null값 허용)
     //mappedBy : 매핑테이블(여기서는 board_image_set)을 생성하지 않기 위해 설정. 어떤 엔티티의 속성으로 매핑되는지를 설정(게시글을 연관관계의 주인으로 설정)
     @Builder.Default
+    @BatchSize(size = 20) //쿼리 20개를 묶어서(Batch) 한번에 실행
     private Set<BoardImage> imageSet = new HashSet<>();
 
     public void addImage(String uuid, String fileName){

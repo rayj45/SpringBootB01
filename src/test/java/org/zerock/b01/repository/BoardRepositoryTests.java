@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.annotation.Commit;
 import org.zerock.b01.domain.Board;
 import org.zerock.b01.domain.BoardImage;
 import org.zerock.b01.dto.BoardListReplyCountDTO;
@@ -24,6 +25,9 @@ public class BoardRepositoryTests {
 
     @Autowired
     private BoardRepository boardRepository;
+
+    @Autowired
+    private ReplyRepository replyRepository;
 
     @Test
     public void testInsert(){
@@ -154,6 +158,8 @@ public class BoardRepositoryTests {
     }
 
     @Test
+    @Transactional
+    @Commit //트랜잭션을 통과하면 commit처리
     public void testReadWithImage(){
 
 //        Optional<Board> result = boardRepository.findById(1L);
@@ -161,17 +167,65 @@ public class BoardRepositoryTests {
 
         Board board = result.orElseThrow(); //예외처리
 
+        board.clearImages(); //BoardImage객체들 삭제 - 첨부파일을 추가할때 기존의 것은 삭제하고 추가해야하므로..
+
         log.info(board);
         log.info("----------------");
 //        log.info(board.getImageSet()); //게시물에 등록된 이미지들 조회
         //Transactional 처리를 안하면 DB에 여러번 접근해야 하므로 No Session 에러 발생
 
-        for (BoardImage boardImage : board.getImageSet()){ //board객체에서 ImageSet객체가 있는 동안 반복
-            log.info(boardImage); //boardImage객체 로그생성
+//        for (BoardImage boardImage : board.getImageSet()){ //board객체에서 ImageSet객체가 있는 동안 반복
+//            log.info(boardImage); //boardImage객체 로그생성
+//        }
+        
+        for (int i = 0; i < 2; i++){ //BoardImage 객체 2개 생성
+            board.addImage(UUID.randomUUID().toString(), "uploadfile + " + i + ".jpg");
         }
 
+        boardRepository.save(board);
     }
 
+    @Test
+    @Transactional
+    @Commit
+    public void testRemovAll(){
 
+        Long bno = 1L;
+
+        replyRepository.deleteById(bno);
+
+        boardRepository.deleteById(bno);
+    }
+
+    @Test
+    public void testInsertAll(){
+        for (int i = 1; i <= 100; i++){
+
+            Board board = Board.builder()
+                    .title("Title.." + i)
+                    .content("Content.." + i)
+                    .writer("Wrtier.." + i)
+                    .build();
+
+            for (int j = 1; j < 3; j++){
+
+                if (i % 5 == 0){
+                    continue; //i가 5의 배수이면 내부for문 종료 - save실행
+                }
+                //i가 5의 배수가 아니면
+                board.addImage(UUID.randomUUID().toString(), i + "file" + j + ".jpg");
+            }
+            boardRepository.save(board);
+        }
+    }
+
+    @Transactional
+    @Test
+    public void testSearchImageReplyCount(){
+
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("bno").descending());
+
+        boardRepository.searchWithALl(null, null, pageable);
+    }
 
 }
