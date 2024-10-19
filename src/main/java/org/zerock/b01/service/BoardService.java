@@ -1,9 +1,6 @@
 package org.zerock.b01.service;
 
-import org.zerock.b01.dto.BoardDTO;
-import org.zerock.b01.dto.BoardListReplyCountDTO;
-import org.zerock.b01.dto.PageRequestDTO;
-import org.zerock.b01.dto.PageResponseDTO;
+import org.zerock.b01.dto.*;
 
 public interface BoardService {
 
@@ -19,4 +16,7 @@ public interface BoardService {
 
     PageResponseDTO<BoardListReplyCountDTO> listWithReplyCount(PageRequestDTO pageRequestDTO);
     //BoardListReplyCountDTO(댓글반영된 boardDTO) 타입으로 페이징 리스트
+
+    //게시글 이미지와 댓글숫자까지 처리
+    PageResponseDTO<BoardListAllDTO> listWithAll(PageRequestDTO pageRequestDTO);
 }
