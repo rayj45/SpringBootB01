@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Commit;
 import org.zerock.b01.domain.Board;
 import org.zerock.b01.domain.BoardImage;
+import org.zerock.b01.dto.BoardListAllDTO;
 import org.zerock.b01.dto.BoardListReplyCountDTO;
 
 import javax.transaction.Transactional;
@@ -225,7 +226,17 @@ public class BoardRepositoryTests {
 
         Pageable pageable = PageRequest.of(0, 10, Sort.by("bno").descending());
 
-        boardRepository.searchWithALl(null, null, pageable);
+//        boardRepository.searchWithALl(null, null, pageable);
+
+        Page<BoardListAllDTO> result = boardRepository.searchWithALl(null, null, pageable);
+
+        log.info("------------------");
+        log.info(result.getTotalElements());
+
+        result.getContent().forEach(boardListAllDTO -> log.info(boardListAllDTO));
+
     }
+
+
 
 }

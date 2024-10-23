@@ -3,7 +3,7 @@ select now();
 SELECT * FROM BOARD
 ORDER BY BNO DESC;
 
-SHOW TABLE STATUS LIKE 'BOARD';
+SHOW TABLE STATUS LIKE 'BOARD'; /*data dictionary*/
 
 ALTER TABLE BOARD AUTO_INCREMENT= 1; /*auto increment 초기화*/
 
