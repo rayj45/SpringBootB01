@@ -1,6 +1,7 @@
 package org.zerock.b01.repository.search;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.data.domain.Page;
@@ -10,9 +11,11 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.zerock.b01.domain.Board;
 import org.zerock.b01.domain.QBoard;
 import org.zerock.b01.domain.QReply;
+import org.zerock.b01.dto.BoardListAllDTO;
 import org.zerock.b01.dto.BoardListReplyCountDTO;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardSearch {
 
@@ -132,24 +135,49 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
     }
 
     @Override
-    public Page<BoardListReplyCountDTO> searchWithALl(String[] types, String keyword, Pageable pageable) {
-
+//    public Page<BoardListReplyCountDTO> searchWithALl(String[] types, String keyword, Pageable pageable) {
+        public Page<BoardListAllDTO> searchWithALl(String[] types, String keyword, Pageable pageable) {
         QBoard board = QBoard.board;
         QReply reply = QReply.reply;
 
         JPQLQuery<Board> boardJPQLQuery = from(board); //select * from board;
         boardJPQLQuery.leftJoin(reply).on(reply.board.eq(board)); //reply의 board객체랑 board객체와 같은 것을 on조건절로 leftJoin
 
+        boardJPQLQuery.groupBy(board);
+
         getQuerydsl().applyPagination(pageable, boardJPQLQuery); //paging
+
+        JPQLQuery<Tuple> tupleJPQLQuery = boardJPQLQuery.select(board, reply.countDistinct()); //.countDistinct : 중복제거 카운트
 
         List<Board> boardList = boardJPQLQuery.fetch(); //조인한 쿼리를 fetch
 
-        boardList.forEach(board1 -> {
-            System.out.println(board1.getBno());
-            System.out.println(board1.getImageSet());
-            System.out.println("------------------");
-        });
+        List<Tuple> tupleList = tupleJPQLQuery.fetch(); //중복제거 카운트한 tuple쿼리를 fetch
+        //List<Tuple>은 Projections보다 번거롭기는 하지만 객체를 커스터마이징 할 수 있다는 장점
 
-        return null;
+//        boardList.forEach(board1 -> {
+//            System.out.println(board1.getBno());
+//            System.out.println(board1.getImageSet());
+//            System.out.println("------------------");
+//        });
+
+        List<BoardListAllDTO> dtoList = tupleList.stream().map(tuple -> {
+
+            Board board1 = (Board) tuple.get(board);
+            long replyCount = tuple.get(1, Long.class);
+
+            BoardListAllDTO dto = BoardListAllDTO.builder()
+                    .bno(board1.getBno())
+                    .title(board1.getTitle())
+                    .writer(board1.getWriter())
+                    .regDate(board1.getRegDate())
+                    .replyCount(replyCount)
+                    .build();
+
+            return dto;
+        }).collect(Collectors.toList());
+
+        long totalCount = boardJPQLQuery.fetchCount();
+
+        return new PageImpl<>(dtoList, pageable, totalCount);
     }
 }
