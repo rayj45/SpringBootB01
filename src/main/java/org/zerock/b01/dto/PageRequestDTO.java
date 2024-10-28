@@ -41,7 +41,7 @@ public class PageRequestDTO {
     }
 
     public String getLink(){
-        if (link == null){
+        if (link == null){ //link가 없으면
             StringBuilder builder = new StringBuilder();
 
             builder.append("page=" + this.page);
