@@ -12,8 +12,6 @@ import org.zerock.b01.domain.Board;
 import org.zerock.b01.domain.Reply;
 import org.zerock.b01.dto.BoardListReplyCountDTO;
 
-import java.util.UUID;
-
 @SpringBootTest
 @Log4j2
 public class ReplyRepositoryTests {
@@ -23,7 +21,7 @@ public class ReplyRepositoryTests {
 
     @Test
     public void testInsert(){
-        Long bno = 1L;
+        Long bno = 510L;
 
         Board board = Board.builder()
                 .bno(bno)
@@ -50,4 +48,5 @@ public class ReplyRepositoryTests {
             log.info(reply);
         });
     }
+
 }

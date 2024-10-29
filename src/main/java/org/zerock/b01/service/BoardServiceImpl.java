@@ -29,7 +29,9 @@ public class BoardServiceImpl implements BoardService{
     @Override
     public Long register(BoardDTO boardDTO) {
 
-        Board board = modelMapper.map(boardDTO, Board.class);
+//        Board board = modelMapper.map(boardDTO, Board.class);
+        Board board = dtoToEntity(boardDTO); //modelmapper대신 dtoToEntiy사용(메서드를 default접근제어자로 설정해놨기에 override없이 사용가능
+        //addImage메서드 때문애 받은 boardDTO에 fileName이 있으면 boardImage객체에 fileName넣어줌
 
         Long bno = boardRepository.save(board).getBno(); //save메서드 : board객체를 db에 저장(register)하고, 저장한 board객체의 bno를 bno변수에 저장
 
@@ -39,11 +41,13 @@ public class BoardServiceImpl implements BoardService{
     @Override
     public BoardDTO readOne(Long bno) {
 
-        Optional<Board> result = boardRepository.findById(bno);
+        //Optional<Board> result = boardRepository.findById(bno);
+        Optional<Board> result = boardRepository.findIdByWithImages(bno); //image와 같이 조회
 
         Board board = result.orElseThrow(); //예외처리
 
-        BoardDTO boardDTO = modelMapper.map(board, BoardDTO.class);
+//        BoardDTO boardDTO = modelMapper.map(board, BoardDTO.class);
+        BoardDTO boardDTO = entityToDto(board); //modelmapper대신 image까지 함께 반환하는 entityToDTO메서드 사용
 
         return boardDTO;
     }

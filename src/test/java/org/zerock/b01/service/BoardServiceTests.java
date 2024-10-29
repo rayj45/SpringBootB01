@@ -8,6 +8,9 @@ import org.zerock.b01.dto.BoardDTO;
 import org.zerock.b01.dto.PageRequestDTO;
 import org.zerock.b01.dto.PageResponseDTO;
 
+import java.util.Arrays;
+import java.util.UUID;
+
 @SpringBootTest
 @Log4j2
 public class BoardServiceTests {
@@ -58,6 +61,45 @@ public class BoardServiceTests {
         PageResponseDTO<BoardDTO> responseDTO = boardService.list(pageRequestDTO);
 
         log.info(responseDTO);
+
+    }
+
+    @Test
+    public void testRegisterWithImages(){ //image와 함께 게시글등록 테스트
+
+        log.info(boardService.getClass().getName());
+
+        BoardDTO boardDTO = BoardDTO.builder()
+                .title("File...Sample Title...")
+                .content("Sample Content...")
+                .writer("user00")
+                .build();
+
+        boardDTO.setFileNames(
+                Arrays.asList(
+                        UUID.randomUUID()+"_aaa.jpg",
+                        UUID.randomUUID()+"_bbb.jpg",
+                        UUID.randomUUID()+"_ccc.jpg"
+                )
+        );
+        Long bno = boardService.register(boardDTO);
+
+        log.info("bno : " + bno);
+    } //testRegisterWithImages
+
+    @Test
+    public void testReadAll(){
+
+        Long bno = 303L;
+
+        BoardDTO boardDTO = boardService.readOne(bno);
+
+        log.info(boardDTO);
+
+        //boardDTO에 등록된 fileName을 모두 조회
+        for (String fileName : boardDTO.getFileNames()) {
+            log.info(fileName);
+        }
 
     }
 

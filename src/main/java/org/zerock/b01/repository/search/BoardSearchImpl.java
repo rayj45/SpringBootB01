@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.zerock.b01.domain.Board;
 import org.zerock.b01.domain.QBoard;
 import org.zerock.b01.domain.QReply;
+import org.zerock.b01.dto.BoardImageDTO;
 import org.zerock.b01.dto.BoardListAllDTO;
 import org.zerock.b01.dto.BoardListReplyCountDTO;
 
@@ -113,6 +114,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
             query.where(booleanBuilder); //select * from board where booleanBuilder : 검색조건에 booleanBuilder에서 설정한 내용이 걸리는 것
         } //if
 
+        //검색유형과 검색어가 없다면
         query.where(board.bno.gt(0L)); //bno > 0
 
         //projection : JPQL의 결과를 바로 DTO로 처리하는 기능
@@ -143,6 +145,29 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         JPQLQuery<Board> boardJPQLQuery = from(board); //select * from board;
         boardJPQLQuery.leftJoin(reply).on(reply.board.eq(board)); //reply의 board객체랑 board객체와 같은 것을 on조건절로 leftJoin
 
+        if ( (types != null && types.length > 0) && keyword != null ){
+
+            BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+            for (String type : types){
+                switch (type){
+                    case "t" :
+                        booleanBuilder.or(board.title.contains(keyword));
+                        break;
+
+                    case "c" :
+                        booleanBuilder.or(board.content.contains(keyword));
+                        break;
+
+                    case "w":
+                        booleanBuilder.or(board.writer.contains(keyword));
+                        break;
+                } //switch
+            } //for
+            boardJPQLQuery.where(booleanBuilder); //JQPL로 select * from booleanBuilder;
+
+        }
+
         boardJPQLQuery.groupBy(board);
 
         getQuerydsl().applyPagination(pageable, boardJPQLQuery); //paging
@@ -172,6 +197,16 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                     .regDate(board1.getRegDate())
                     .replyCount(replyCount)
                     .build();
+
+            List<BoardImageDTO> imageDTOS = board1.getImageSet().stream().sorted()
+                    .map(boardImage -> BoardImageDTO.builder()
+                            .uuid(boardImage.getUuid())
+                            .fileName(boardImage.getFileName())
+                            .ord(boardImage.getOrd())
+                            .build()
+                    ).collect(Collectors.toList());
+
+            dto.setBoardImages(imageDTOS);
 
             return dto;
         }).collect(Collectors.toList());
