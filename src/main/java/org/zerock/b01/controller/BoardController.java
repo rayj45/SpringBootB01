@@ -25,6 +25,12 @@ public class BoardController {
 
     private final BoardService boardService;
 
+    //RequiredArgsConstructor의 의미 필요한 생성자를 어노테이션으로 정의해줌
+//    public BoardController(BoardService boardService) {
+//        this.boardService = boardService;
+//    }
+
+
     @RequestMapping("/list")
     public void list(PageRequestDTO pageRequestDTO, Model model){
 //        PageResponseDTO<BoardDTO> responseDTO = boardService.list(pageRequestDTO); //BoardDTO타입으로 페이징된 데이터가 리스트화되어 responseDTO에 저장

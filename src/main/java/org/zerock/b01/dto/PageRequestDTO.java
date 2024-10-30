@@ -33,7 +33,7 @@ public class PageRequestDTO {
         if (type == null || type.isEmpty()){ //검색유형 없다면 null 반환
             return null;
         }
-        return type.split(""); //검색유혀 있다면 잘라서 배열로 반환
+        return type.split(""); //검색유형 있다면 잘라서 배열로 반환
     }
 
     public Pageable getPageable(String...props){

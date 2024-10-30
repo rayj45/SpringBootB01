@@ -62,6 +62,15 @@ public class BoardServiceImpl implements BoardService{
 
         board.change(boardDTO.getTitle(), boardDTO.getContent()); //change메서드로 제목,내용 변경
 
+        board.clearImages(); //board객체에 등록된 이미지들 모두 제거
+
+        if (boardDTO.getFileNames() != null){ //boardDTO의 파일명이 있으면
+            for (String fileName : boardDTO.getFileNames()){
+                String[] arr = fileName.split("_");
+                board.addImage(arr[0], arr[1]);
+            }
+        }
+
         boardRepository.save(board); //수정된 board객체를 저장
     }
 
@@ -107,6 +116,17 @@ public class BoardServiceImpl implements BoardService{
 
     @Override
     public PageResponseDTO<BoardListAllDTO> listWithAll(PageRequestDTO pageRequestDTO) {
-        return null;
+
+        String[] types = pageRequestDTO.getTypes();
+        String keyword = pageRequestDTO.getKeyword();
+        Pageable pageable = pageRequestDTO.getPageable("bno");
+
+        Page<BoardListAllDTO> result = boardRepository.searchWithALl(types, keyword, pageable);
+
+        return PageResponseDTO.<BoardListAllDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(result.getContent())
+                .total((int)result.getTotalElements())
+                .build();
     }
 }
