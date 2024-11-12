@@ -27,6 +27,13 @@
                             <input type="text" name="Writer" class="form-control" placeholder="Writer">
                         </div>
 
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Images</span>
+                            <div class="float-end uploadHidden">
+                                <button type="button" class="btn btn-primary uploadFileBtn">ADD Files</button>
+                            </div>
+                        </div>
+
                         <div class="my-4">
                             <div class="float-end">
                                 <button type="submit" class="btn btn-primary">Submit</button>
@@ -38,7 +45,41 @@
             </div>
         </div>
     </div>
+
+    <!—- 첨부 파일 섬네일을 보여줄 부분 -->
+    <div class="row mt-3">
+        <div class="col ">
+            <div class="container-fluid d-flex uploadResult" style="flex-wrap: wrap;">
+            </div>
+        </div>
+    </div>
+
+    <!—- 첨부파일 추가를 위한 모달창 -->
+    <div class="modal uploadModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload File</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <input type="file" name="files" class="form-control" multiple >
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary uploadBtn">Upload</button>
+                    <button type="button" class="btn btn-outline-dark closeUploadBtn" >Close</button>
+                </div>
+            </div>
+        </div>
+    </div><!-- register modal -->
+
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script src="/js/upload.js"></script>
 
 <script layout:fragment="script" th:inline="javascript">
     const errors = [[${errors}]] /*controller에서 보낸 bindingResult.getAllErrors()*/
@@ -52,6 +93,16 @@
         } //controller에서 잡아낸 에러가 있다면, 에러의 key,value를 for문으로 담아냄
         alert(errorMsg)
     }
+
+    const uploadModal = new bootstrap.Modal(document.querySelector(".uploadModal"))
+
+    document.querySelector(".uploadFileBtn").addEventListener("click", function (e){
+
+        e.preventDefault() //기본동작 방지
+        e.stopPropagation() //이벤트전파 방지
+        uploadModal.show()
+    }, false)
+
 </script>
 
 </html>
