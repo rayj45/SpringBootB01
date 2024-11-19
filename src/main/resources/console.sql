@@ -15,7 +15,8 @@ SELECT COUNT(*) FROM REPLY;
 INSERT INTO REPLY (moddate, regdate, reply_text, replyer, board_bno)
 SELECT moddate, regdate, reply_text, replyer, board_bno from REPLY;
 
-SELECT * FROM BOARD_IMAGE;
+SELECT * FROM BOARD_IMAGE
+where board_bno = 101;
 
 SELECT * FROM BOARD_IMAGE_SET;
 
